@@ -1,6 +1,29 @@
 import { rest } from "msw";
 
-// [Get] fruits 서버 요청 시 [ '사과', '바나나' ]를 응답한다.
-export const getFruits = rest.get("/fruits", (req, res, ctx) =>
-  res(ctx.json(["사과", "바나나"]))
-);
+export const login = rest.post("/login", (req, res, ctx) => {
+  return res(
+    ctx.cookie("authToken", "test"),
+    ctx.json({
+      id: "testUser",
+      firstName: "Kim",
+    })
+  );
+});
+
+export const getAuth = rest.get("/auth", (req, res, ctx) => {
+  const { authToken } = req.cookies;
+  console.log(req.cookies);
+  if (authToken === "test") {
+    return res(
+      ctx.cookie("auth-token", "test"),
+      ctx.json({
+        id: "testUser",
+        firstName: "Kim",
+      })
+    );
+  } else
+    return res(
+      ctx.status(403),
+      ctx.json({ message: "Failed to authenticate!" })
+    );
+});
